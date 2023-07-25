@@ -32,6 +32,7 @@ const dropIn = {
 const TodoModal = ({ type, modalOpen, setModalOpen, todo }) => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
+  const [time, setTime] = useState(new Date().toLocaleString());
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("incomplete");
 
@@ -74,7 +75,7 @@ const TodoModal = ({ type, modalOpen, setModalOpen, todo }) => {
         todo.status !== status ||
         todo.description !== description
       ) {
-        dispatch(updateTodo({ ...todo, title, status, description }));
+        dispatch(updateTodo({ ...todo, title, status, time }));
         toast.success("Task Updated Successfully");
       } else {
         toast.error("No changes made");

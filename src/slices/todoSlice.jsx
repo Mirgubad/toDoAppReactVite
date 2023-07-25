@@ -49,6 +49,7 @@ export const todoSlice = createSlice({
             todo.status = action.payload.status;
             todo.title = action.payload.title;
             todo.description = action.payload.description;
+            todo.time = action.payload.time;
           }
         });
         window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
@@ -72,9 +73,6 @@ export const todoSlice = createSlice({
       state.filterStatus = action.payload;
     },
     reorderTodo: (state, action) => {
-      console.log(action.payload, "upsssssssssssssssssssss");
-      const todoList = window.localStorage.getItem("todoList");
-
       window.localStorage.setItem("todoList", JSON.stringify(action.payload));
       state.todoList = [...action.payload];
     },
