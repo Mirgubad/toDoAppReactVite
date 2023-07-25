@@ -60,7 +60,8 @@
 }
 
 .form input,
-.form select {
+.form select,
+.form textarea {
   margin-top: 0.5rem;
   margin-bottom: 2rem;
   width: 100%;
@@ -69,7 +70,9 @@
   background-color: var(--white);
   font-size: 1.6rem;
 }
-
+textarea {
+  resize: none;
+}
 .form label {
   font-size: 1.6rem;
   color: var(--black-1);

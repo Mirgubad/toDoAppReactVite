@@ -1,9 +1,10 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./app.module.css";
-import { useSelector } from "react-redux";
-import TodoItem from '../TodoItem/index'
-
+import { useSelector, useDispatch } from "react-redux";
+import TodoItem from "../TodoItem/index";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { reorderTodo } from "../../slices/todoSlice";
 const container = {
   hidden: { opacity: 1 },
   visible: {
@@ -24,8 +25,32 @@ const child = {
 };
 
 const AppContent = () => {
+  const dispatch = useDispatch();
   const todoList = useSelector((state) => state.todo.todoList);
   const filterStatus = useSelector((state) => state.todo.filterStatus);
+
+  const handleDragDrop = (results) => {
+    const { source, destination, type } = results;
+
+    if (!destination) return;
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
+      return;
+
+    if (type === "group") {
+      const reorderedList = [...todoList];
+      const sourceIndex = source.index;
+      const destinationIndex = destination.index;
+
+      const [removedList] = reorderedList.splice(sourceIndex, 1);
+      reorderedList.splice(destinationIndex, 0, removedList);
+
+      dispatch(reorderTodo(reorderedList));
+    }
+  };
 
   const sortedToDoList = [...todoList];
   sortedToDoList.sort((a, b) => new Date(a.time));
@@ -47,7 +72,33 @@ const AppContent = () => {
     >
       <AnimatePresence>
         {filteredToDoList && filteredToDoList.length > 0 ? (
-          filteredToDoList.map((todo) => <TodoItem key={todo.id} todo={todo} />)
+          <DragDropContext onDragEnd={handleDragDrop}>
+            <Droppable droppableId="ROOT" type="group">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {filteredToDoList.map((todo, index) => (
+                    <Draggable
+                      draggableId={todo.id}
+                      key={todo.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          className={styles.draggable__item}
+                          {...provided.dragHandleProps}
+                          {...provided.draggableProps}
+                          ref={provided.innerRef}
+                        >
+                          <TodoItem key={todo.id} todo={todo} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         ) : (
           <motion.p variants={child} className={styles.emptyText}>
             No Todos

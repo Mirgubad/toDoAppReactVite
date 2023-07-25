@@ -9,6 +9,7 @@ import styles from "../TodoItem/todoItem.module.css";
 import { getClasses } from "../../utils/getClasses";
 import CheckButton from "../CheckButton/index";
 import TodoModal from "../TodoModal/index";
+ 
 
 const child = {
   hidden: { y: 20, opacity: 0 },
@@ -49,6 +50,7 @@ const TodoItem = ({ todo }) => {
 
   return (
     <>
+       
       <motion.div className={styles.item} variants={child}>
         <div className={styles.todoDetails}>
           <CheckButton checked={checked} handleCheck={handleCheck} />
@@ -60,6 +62,11 @@ const TodoItem = ({ todo }) => {
               ])}
             >
               {todo.title}
+            </p>
+            <p
+           
+            >
+              {todo.description}
             </p>
             <p className={styles.time}>
               {format(new Date(todo.time), "p, MM/dd/yyyy")}

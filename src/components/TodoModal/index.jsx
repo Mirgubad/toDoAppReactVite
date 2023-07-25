@@ -32,14 +32,17 @@ const dropIn = {
 const TodoModal = ({ type, modalOpen, setModalOpen, todo }) => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [status, setStatus] = useState("incomplete");
 
   useEffect(() => {
     if (type === "update" && todo) {
       setTitle(todo.title);
       setStatus(todo.status);
+      setDescription(todo.description);
     } else {
       setTitle("");
+      setDescription("");
       setStatus("incomplete");
     }
   }, [type, todo, modalOpen]);
@@ -47,17 +50,18 @@ const TodoModal = ({ type, modalOpen, setModalOpen, todo }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (title === "") {
-      toast.error("Please enter a title");
+    if (title === "" || description === "") {
+      toast.error("Please fill data");
       return;
     }
-    if (title && status) {
+    if (title && status && description) {
       if (type === "add") {
         dispatch(
           addTodo({
             id: uuid(),
             title,
             status,
+            description,
             time: new Date().toLocaleString(),
           })
         );
@@ -65,9 +69,13 @@ const TodoModal = ({ type, modalOpen, setModalOpen, todo }) => {
       }
     }
     if (type === "update") {
-      if (todo.title !== title || todo.status !== status) {
-        dispatch(updateTodo({ ...todo, title, status }));
-        toast.success("Tak Updated Successfully");
+      if (
+        todo.title !== title ||
+        todo.status !== status ||
+        todo.description !== description
+      ) {
+        dispatch(updateTodo({ ...todo, title, status, description }));
+        toast.success("Task Updated Successfully");
       } else {
         toast.error("No changes made");
         return;
@@ -120,6 +128,14 @@ const TodoModal = ({ type, modalOpen, setModalOpen, todo }) => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
+              </label>
+              <label htmlFor="description">
+                Description
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                ></textarea>
               </label>
 
               <label htmlFor="type">
